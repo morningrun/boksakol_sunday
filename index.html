@@ -551,6 +551,15 @@
                     });
                     globalLogs = Array.from(uniqueMap.values());
                 }
+                if (resData.events && typeof resData.events === "object") {
+                    const cleanedEvents = {};
+                    Object.entries(resData.events).forEach(([k, v]) => {
+                        if (k && String(v || "").trim()) {
+                            cleanedEvents[String(k).trim()] = String(v).trim();
+                        }
+                    });
+                    dateEvents = cleanedEvents;
+                }
                 saveLocally();
             }
         } catch (e) {
@@ -578,7 +587,8 @@
                 body: JSON.stringify({
                     action: "saveData",
                     members: globalMembers,
-                    logs: globalLogs
+                    logs: globalLogs,
+                    events: dateEvents
                 })
             });
         } catch (e) {
@@ -621,7 +631,7 @@
         });
     }
 
-    function saveDateEvent() {
+    async function saveDateEvent() {
         if (!isAdminLoggedIn) return;
         const select = document.getElementById('event-date-select');
         const input = document.getElementById('event-title-input');
@@ -633,21 +643,21 @@
             return;
         }
         dateEvents[dStr] = title;
-        saveLocally();
         input.value = '';
         renderAdminEventList();
         renderSundayVerticalList();
         updateSwipeWrapperHeight();
+        await saveDataToSheet();
         alert(`[${dStr.replace(/^\d{4}년\s*/, '')}]에 [${title}] 일정이 등록되었습니다.`);
     }
 
-    function removeDateEvent(dStr) {
+    async function removeDateEvent(dStr) {
         if (!isAdminLoggedIn) return;
         delete dateEvents[dStr];
-        saveLocally();
         renderAdminEventList();
         renderSundayVerticalList();
         updateSwipeWrapperHeight();
+        await saveDataToSheet();
     }
 
     function toggleAdminMode() {
