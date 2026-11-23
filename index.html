@@ -1132,10 +1132,6 @@
 
         displayList.forEach((item, index) => {
             if (index > 0 && item.score < displayList[index - 1].score) currentRank = index + 1;
-            totalWorkout += item.workout;
-            totalAttend += item.attend;
-            totalComp += item.comp;
-            totalScore += item.score;
 
             const rankText = currentRank === 1 ? '🥇 1' : (currentRank === 2 ? '🥈 2' : (currentRank === 3 ? '🥉 3' : `${currentRank}`));
             const rowClass = currentRank === 1 ? 'top-1' : (currentRank === 2 ? 'top-2' : (currentRank === 3 ? 'top-3' : ''));
@@ -1152,6 +1148,10 @@
             `;
             tbody.appendChild(tr);
         });
+
+        sheetWrap.appendChild(table);
+        statsDiv.appendChild(sheetWrap);
+        updateSwipeWrapperHeight();
 
         const sumTr = document.createElement('tr');
         sumTr.style.cssText = "background:#e2e8f0; border-top:2px solid #64748b;";
