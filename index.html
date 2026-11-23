@@ -41,12 +41,8 @@
 
         .container { max-width: 600px; width: 100%; box-sizing: border-box; margin: 0 auto; background: var(--card-bg); padding: 10px; border-radius: 12px; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08); }
 
-        .main-title-box { text-align: center; margin: 4px 0 6px 0; }
+        .main-title-box { text-align: center; margin: 4px 0 8px 0; }
         .main-title { font-size: 1.42rem; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
-
-        .sync-status-banner { text-align: center; font-size: 0.75rem; font-weight: 700; padding: 5px 8px; border-radius: 7px; margin-bottom: 8px; background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
-        .sync-status-banner.ok { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
-        .sync-status-banner.warn { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
 
         .admin-status-bar { display: flex; justify-content: space-between; align-items: center; background: #eff6ff; border: 1.5px solid #93c5fd; color: #1e40af; padding: 6px 10px; border-radius: 8px; margin-bottom: 8px; font-size: 0.78rem; font-weight: 800; }
         .admin-logout-btn { background: #1e40af; color: #ffffff; border: none; border-radius: 5px; padding: 4px 8px; font-size: 0.72rem; font-weight: 800; cursor: pointer; }
@@ -157,7 +153,6 @@
     <div class="main-title-box">
         <div class="main-title">🏃‍♂️ 복사골 일요운동 출석부</div>
     </div>
-    <div id="sync-status-banner" class="sync-status-banner">🔄 구글 시트 연결 중...</div>
 
     <div id="admin-status-bar" class="admin-status-bar hidden">
         <span>🔐 관리자 모드 (출석체크·일정관리 활성)</span>
@@ -245,13 +240,6 @@
         { name: "최정엽" }, { name: "필동만" }, { name: "황문섭" }, { name: "황연성" }
     ];
 
-    function setSyncBanner(type, text) {
-        const el = document.getElementById('sync-status-banner');
-        if (!el) return;
-        el.className = `sync-status-banner ${type || ''}`;
-        el.textContent = text;
-    }
-
     function safeStorageGet(key) {
         try { return window.localStorage.getItem(key); } catch (e) { return null; }
     }
@@ -336,7 +324,8 @@
             const wrapper = document.getElementById('swipe-wrapper');
             const panes = [document.getElementById('pane-checkin'), document.getElementById('pane-stats')];
             if (wrapper && panes[activePaneIndex]) {
-                const targetHeight = panes[activePaneIndex].scrollHeight;
+                const targetPane = panes[activePaneIndex];
+                const targetHeight = targetPane.scrollHeight;
                 if (targetHeight > 0) wrapper.style.height = (targetHeight + 20) + 'px';
             }
         };
@@ -622,17 +611,13 @@
             const text = await res.text();
             const resData = JSON.parse(text);
             applyServerPayload(resData);
-            setSyncBanner('ok', `✅ 시트 동기화 완료 (출석 기록 ${globalLogs.length}건)`);
         } catch (e) {
             try {
                 const getRes = await fetch(GOOGLE_SCRIPT_URL);
                 const getText = await getRes.text();
                 const getData = JSON.parse(getText);
                 applyServerPayload(getData);
-                setSyncBanner('ok', `✅ 시트 동기화 완료 (출석 기록 ${globalLogs.length}건)`);
-            } catch (e2) {
-                setSyncBanner('warn', `⚠️ 구글 시트 연결 실패 (로컬 기록 ${globalLogs.length}건 표시)`);
-            }
+            } catch (e2) {}
         }
         sortMembers();
     }
@@ -668,10 +653,7 @@
                 adminPassword = String(resData.adminPassword).trim();
             }
             saveLocally();
-            setSyncBanner('ok', `✅ 시트 저장 완료 (출석 기록 ${globalLogs.length}건)`);
-        } catch (e) {
-            setSyncBanner('warn', `⚠️ 시트 저장 실패 (로컬에 임시 저장됨)`);
-        }
+        } catch (e) {}
     }
 
     function populateEventDateSelect() {
