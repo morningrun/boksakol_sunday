@@ -86,7 +86,6 @@
         .sunday-item-btn.active .sunday-stat-badge { background: #dbeafe; color: #1e40af; }
         .sunday-event-badge { font-size: 0.73rem; font-weight: 800; color: #9a3412; background: #ffedd5; padding: 2px 6px; border-radius: 4px; display: inline-block; width: fit-content; }
 
-        /* 가로 3분할 출석현황 요약 박스 컨테이너 */
         .checkin-triple-container { display: flex; gap: 6px; margin-bottom: 10px; width: 100%; box-sizing: border-box; padding: 0; align-items: stretch; }
         .checkin-column-box { flex: 1; border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 4px; display: flex; flex-direction: column; min-width: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); box-sizing: border-box; }
         
@@ -104,7 +103,6 @@
         .checkin-name-item.admin-clickable:hover { background: rgba(0,0,0,0.05); color: var(--accent); }
         .checkin-item-num { color: #64748b; font-size: 0.72rem; font-weight: 700; min-width: 16px; text-align: right; flex-shrink: 0; }
 
-        /* 관리자 전용 회원 체크 카드 스타일 */
         .member-card { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; margin-bottom: 5px; background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 7px; gap: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); width: 100%; box-sizing: border-box; }
         .member-info { display: flex; align-items: center; gap: 6px; flex-shrink: 0; min-width: 95px; }
         .member-name { font-weight: 700; font-size: 0.9rem; color: var(--primary); display: flex; align-items: center; gap: 4px; white-space: nowrap; }
@@ -114,7 +112,6 @@
         .btn-group button { flex: 1; padding: 6px 2px; font-size: 0.72rem; border: 1px solid var(--border); border-radius: 5px; cursor: pointer; font-weight: 700; background: #f8fafc; color: var(--text-sub); text-align: center; white-space: nowrap; }
         .btn-group button:hover { background: #eff6ff; border-color: var(--accent); color: var(--accent); }
 
-        /* 누적현황 엑셀 시트형 테이블 */
         .excel-sheet-wrap { width: 100%; overflow-x: auto; border: 1.5px solid #94a3b8; border-radius: 8px; background: #ffffff; box-sizing: border-box; }
         .stats-excel-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 0.76rem; color: var(--text-main); }
         .stats-excel-table thead th { background: #1e293b; color: #ffffff; font-weight: 800; padding: 7px 3px; border: 1px solid #334155; text-align: center; white-space: nowrap; }
@@ -169,7 +166,6 @@
 
     <div class="swipe-wrapper" id="swipe-wrapper">
         <div id="swipe-container" class="swipe-container">
-            <!-- 1번 패널: 출석현황 / 관리자 체크 -->
             <div class="swipe-pane active-pane" id="pane-checkin">
                 <div class="month-filter" id="checkin-month-buttons"></div>
                 
@@ -181,7 +177,6 @@
                 <div id="member-list" class="loading">데이터 로딩 중...</div>
             </div>
 
-            <!-- 2번 패널: 누적현황 -->
             <div class="swipe-pane" id="pane-stats">
                 <div class="month-filter" id="stats-month-buttons"></div>
                 <div class="stats-current-date-box" id="stats-current-date-text">[ 2026년 11월 23일 현재 ]</div>
@@ -190,7 +185,6 @@
         </div>
     </div>
 
-    <!-- 관리자 설정 및 회원 관리 패널 -->
     <div id="admin-panel" class="admin-panel hidden">
         <h3>🔒 관리자 설정 및 회원 관리</h3>
 
@@ -250,17 +244,33 @@
         { name: "이호병" }, { name: "방지원" }, { name: "황연성" }, { name: "노진규" }
     ];
 
-    let globalMembers = JSON.parse(localStorage.getItem('boksakol_sunday_members_v32')) || [...DEFAULT_MEMBERS];
-    let rawLogs = JSON.parse(localStorage.getItem('boksakol_sunday_logs_v32')) || [];
-    let globalLogs = rawLogs.filter(l => [10, 5, 99].includes(Number(l.score)));
-    let dateEvents = JSON.parse(localStorage.getItem('boksakol_sunday_events_v32')) || {};
+    function safeStorageGet(key) {
+        try {
+            return window.localStorage.getItem(key);
+        } catch (e) {
+            return null;
+        }
+    }
 
-    let adminPassword = localStorage.getItem('boksakol_sunday_admin_pwd') || "1234";
+    function safeStorageSet(key, val) {
+        try {
+            window.localStorage.setItem(key, val);
+        } catch (e) {
+            console.warn("localStorage 저장 제한 환경:", key);
+        }
+    }
+
+    let globalMembers = JSON.parse(safeStorageGet('boksakol_sunday_members_v32')) || [...DEFAULT_MEMBERS];
+    let rawLogs = JSON.parse(safeStorageGet('boksakol_sunday_logs_v32')) || [];
+    let globalLogs = rawLogs.filter(l => [10, 5, 99].includes(Number(l.score)));
+    let dateEvents = JSON.parse(safeStorageGet('boksakol_sunday_events_v32')) || {};
+
+    let adminPassword = safeStorageGet('boksakol_sunday_admin_pwd') || "1234";
     let isAdminLoggedIn = sessionStorage.getItem('boksakol_sunday_admin_logged_in') === 'true';
     let adminSearchKeyword = "";
 
-    let selectedDateStr = localStorage.getItem('boksakol_sunday_selected_date') || "";
-    let checkinSelectedMonth = localStorage.getItem('boksakol_sunday_selected_month') || (String(new Date().getMonth() + 1) + "월");
+    let selectedDateStr = safeStorageGet('boksakol_sunday_selected_date') || "";
+    let checkinSelectedMonth = safeStorageGet('boksakol_sunday_selected_month') || (String(new Date().getMonth() + 1) + "월");
     let statsSelectedMonth = "전체";
     let activePaneIndex = 0;
 
@@ -295,6 +305,21 @@
         return `${years}년 ${months}월 ${days}일 ${weekDays[dateObj.getDay()]}`;
     }
 
+    function normalizeEventDateKey(val) {
+        const s = String(val || "").trim();
+        if (!s) return "";
+        const korMatch = s.match(/(\d{4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일/);
+        if (korMatch) {
+            const dt = new Date(Number(korMatch[1]), Number(korMatch[2]) - 1, Number(korMatch[3]));
+            if (!isNaN(dt.getTime())) return formatDateToString(dt);
+        }
+        const parsed = new Date(s);
+        if (!isNaN(parsed.getTime())) {
+            return formatDateToString(parsed);
+        }
+        return s;
+    }
+
     function getAllSundaysOfCurrentYear() {
         const sundays = [];
         let d = new Date(currentYear, 0, 1);
@@ -309,7 +334,15 @@
     const allSundays = getAllSundaysOfCurrentYear();
 
     function getEventForDate(dStr) {
-        return dateEvents[String(dStr).trim()] || "";
+        const targetKey = normalizeEventDateKey(dStr);
+        if (!targetKey) return "";
+        if (dateEvents[targetKey]) return dateEvents[targetKey];
+        for (const [k, v] of Object.entries(dateEvents || {})) {
+            if (normalizeEventDateKey(k) === targetKey && String(v || "").trim()) {
+                return String(v).trim();
+            }
+        }
+        return "";
     }
 
     function syncAdminUIState() {
@@ -355,7 +388,7 @@
                     });
                     btn.classList.add('active');
                     checkinSelectedMonth = m;
-                    localStorage.setItem('boksakol_sunday_selected_month', m);
+                    safeStorageSet('boksakol_sunday_selected_month', m);
                     
                     const filtered = allSundays.filter(dStr => {
                         const mMatch = dStr.match(/(\d+)월/);
@@ -370,7 +403,7 @@
                             return tDate <= today;
                         });
                         selectedDateStr = validFiltered.length > 0 ? validFiltered[validFiltered.length - 1] : filtered[0];
-                        localStorage.setItem('boksakol_sunday_selected_date', selectedDateStr);
+                        safeStorageSet('boksakol_sunday_selected_date', selectedDateStr);
                     }
                     renderSundayVerticalList();
                 };
@@ -453,7 +486,6 @@
             const isSelected = (dStr === selectedDateStr);
             const eventTitle = getEventForDate(dStr);
             const dateStat = dateStatsMap[dStr] || { workout: 0, attend: 0, comp: 0, total: 0 };
-
             const displayDateText = dStr.replace(/^\d{4}년\s*/, '');
 
             if (isFuture) {
@@ -468,7 +500,7 @@
                 `;
                 btn.onclick = () => {
                     selectedDateStr = dStr;
-                    localStorage.setItem('boksakol_sunday_selected_date', dStr);
+                    safeStorageSet('boksakol_sunday_selected_date', dStr);
                     renderSundayVerticalList();
                 };
             } else {
@@ -479,7 +511,7 @@
                 `;
                 btn.onclick = () => {
                     selectedDateStr = dStr;
-                    localStorage.setItem('boksakol_sunday_selected_date', dStr);
+                    safeStorageSet('boksakol_sunday_selected_date', dStr);
                     renderSundayVerticalList();
                 };
             }
@@ -524,9 +556,9 @@
     function saveLocally() {
         sortMembers();
         globalLogs = globalLogs.filter(l => [10, 5, 99].includes(Number(l.score)));
-        localStorage.setItem('boksakol_sunday_members_v32', JSON.stringify(globalMembers));
-        localStorage.setItem('boksakol_sunday_logs_v32', JSON.stringify(globalLogs));
-        localStorage.setItem('boksakol_sunday_events_v32', JSON.stringify(dateEvents));
+        safeStorageSet('boksakol_sunday_members_v32', JSON.stringify(globalMembers));
+        safeStorageSet('boksakol_sunday_logs_v32', JSON.stringify(globalLogs));
+        safeStorageSet('boksakol_sunday_events_v32', JSON.stringify(dateEvents));
     }
 
     async function loadDataFromSheet() {
@@ -554,16 +586,20 @@
                 if (resData.events && typeof resData.events === "object") {
                     const cleanedEvents = {};
                     Object.entries(resData.events).forEach(([k, v]) => {
-                        if (k && String(v || "").trim()) {
-                            cleanedEvents[String(k).trim()] = String(v).trim();
+                        const normKey = normalizeEventDateKey(k);
+                        const title = String(v || "").trim();
+                        if (normKey && title) {
+                            cleanedEvents[normKey] = title;
                         }
                     });
-                    dateEvents = cleanedEvents;
+                    if (Object.keys(cleanedEvents).length > 0 || Object.keys(dateEvents).length === 0) {
+                        dateEvents = cleanedEvents;
+                    }
                 }
                 saveLocally();
             }
         } catch (e) {
-            console.error("구글 시트 로드 실패, 로컬 데이터 유지");
+            console.error("구글 시트 로드 실패, 로컬 데이터 유지", e);
         }
         sortMembers();
     }
@@ -582,7 +618,7 @@
         saveLocally();
 
         try {
-            await fetch(GOOGLE_SCRIPT_URL, {
+            const res = await fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
                 body: JSON.stringify({
                     action: "saveData",
@@ -591,8 +627,21 @@
                     events: dateEvents
                 })
             });
+            const resData = await res.json();
+            if (resData && resData.events && typeof resData.events === "object") {
+                const serverEvents = {};
+                Object.entries(resData.events).forEach(([k, v]) => {
+                    const normKey = normalizeEventDateKey(k);
+                    const title = String(v || "").trim();
+                    if (normKey && title) {
+                        serverEvents[normKey] = title;
+                    }
+                });
+                dateEvents = serverEvents;
+                saveLocally();
+            }
         } catch (e) {
-            console.error("구글 시트 저장 실패");
+            console.error("구글 시트 저장 실패", e);
         }
     }
 
@@ -615,17 +664,18 @@
         const listDiv = document.getElementById('admin-event-list');
         if (!listDiv) return;
         listDiv.innerHTML = '';
-        const entries = Object.entries(dateEvents).filter(([, title]) => title && title.trim());
+        const entries = Object.entries(dateEvents).filter(([, title]) => title && String(title).trim());
         if (entries.length === 0) {
             listDiv.innerHTML = `<div style="font-size:0.78rem; color:#94a3b8;">등록된 공식대회·행사가 없습니다.</div>`;
             return;
         }
         entries.forEach(([dStr, title]) => {
+            const displayKey = normalizeEventDateKey(dStr).replace(/^\d{4}년\s*/, '');
             const row = document.createElement('div');
             row.className = 'admin-member-row';
             row.innerHTML = `
-                <span>${dStr.replace(/^\d{4}년\s*/, '')} — <strong>${title}</strong></span>
-                <button type="button" onclick="removeDateEvent('${dStr.replace(/'/g, "\\'")}')">해제</button>
+                <span>${displayKey} — <strong>${title}</strong></span>
+                <button type="button" onclick="removeDateEvent('${String(dStr).replace(/'/g, "\\'")}')">해제</button>
             `;
             listDiv.appendChild(row);
         });
@@ -636,28 +686,45 @@
         const select = document.getElementById('event-date-select');
         const input = document.getElementById('event-title-input');
         if (!select || !input) return;
-        const dStr = select.value;
+        const dStr = normalizeEventDateKey(select.value);
         const title = input.value.trim();
+        if (!dStr) {
+            alert("날짜를 선택해주세요.");
+            return;
+        }
         if (!title) {
             alert("행사명이나 공식일정 텍스트를 입력해주세요. (예: 1/4분기 공식대회, 야유회)");
             return;
         }
         dateEvents[dStr] = title;
+        saveLocally();
         input.value = '';
         renderAdminEventList();
         renderSundayVerticalList();
         updateSwipeWrapperHeight();
         await saveDataToSheet();
+        renderAdminEventList();
+        renderSundayVerticalList();
         alert(`[${dStr.replace(/^\d{4}년\s*/, '')}]에 [${title}] 일정이 등록되었습니다.`);
     }
 
     async function removeDateEvent(dStr) {
         if (!isAdminLoggedIn) return;
+        const targetKey = normalizeEventDateKey(dStr);
         delete dateEvents[dStr];
+        delete dateEvents[targetKey];
+        for (const k of Object.keys(dateEvents)) {
+            if (normalizeEventDateKey(k) === targetKey) {
+                delete dateEvents[k];
+            }
+        }
+        saveLocally();
         renderAdminEventList();
         renderSundayVerticalList();
         updateSwipeWrapperHeight();
         await saveDataToSheet();
+        renderAdminEventList();
+        renderSundayVerticalList();
     }
 
     function toggleAdminMode() {
@@ -717,7 +784,7 @@
         }
         if (confirm("관리자 비밀번호를 정말 변경하시겠습니까?")) {
             adminPassword = newPwd;
-            localStorage.setItem('boksakol_sunday_admin_pwd', newPwd);
+            safeStorageSet('boksakol_sunday_admin_pwd', newPwd);
             input.value = '';
             alert("관리자 비밀번호가 성공적으로 변경되었습니다.");
         }
