@@ -218,7 +218,7 @@
 </div>
 
 <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyrxjAtEF0HDeSaE5Sc2zbAgmtmn53NMzMO98AgyMUkpn0sT_jqIN8iv-GGaeEZd8v4iQ/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwLIhV4V2DZaEsUrDfQD6CdebeQRIbvP7vQNKVgnTuTyKBBUhIL5_r8ehUnEmZ8XUNYpw/exec";
 
     const DEFAULT_MEMBERS = [
         { name: "김창선" }, { name: "방철규" }, { name: "정도영" }, { name: "정범희" }, 
@@ -260,16 +260,63 @@
         }
     }
 
+    function formatDateToString(dateObj) {
+        const years = dateObj.getFullYear();
+        const months = dateObj.getMonth() + 1;
+        const days = dateObj.getDate();
+        const weekDays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+        return `${years}년 ${months}월 ${days}일 ${weekDays[dateObj.getDay()]}`;
+    }
+
+    function normalizeKoreanFullDate(val) {
+        const s = String(val || "").trim();
+        if (!s) return "";
+        const korMatch = s.match(/(\d{4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일/);
+        if (korMatch) {
+            const dt = new Date(Number(korMatch[1]), Number(korMatch[2]) - 1, Number(korMatch[3]));
+            if (!isNaN(dt.getTime())) return formatDateToString(dt);
+        }
+        const isoMatch = s.match(/^(\d{4})[-./](\d{1,2})[-./](\d{1,2})/);
+        if (isoMatch) {
+            const dt = new Date(Number(isoMatch[1]), Number(isoMatch[2]) - 1, Number(isoMatch[3]));
+            if (!isNaN(dt.getTime())) return formatDateToString(dt);
+        }
+        const parsed = new Date(s);
+        if (!isNaN(parsed.getTime())) {
+            return formatDateToString(parsed);
+        }
+        return s;
+    }
+
+    function normalizeLogsList(logsArr) {
+        if (!Array.isArray(logsArr)) return [];
+        const uniqueMap = new Map();
+        logsArr.forEach(l => {
+            const name = String(l.name || "").trim();
+            const date = normalizeKoreanFullDate(l.date);
+            const score = Number(l.score);
+            if (name && date && [10, 5, 99].includes(score)) {
+                let month = Number(l.month) || 0;
+                if (!month) {
+                    const mMatch = date.match(/(\d+)월/);
+                    if (mMatch) month = parseInt(mMatch[1], 10);
+                }
+                uniqueMap.set(date + "_" + name, { name, date, score, month });
+            }
+        });
+        return Array.from(uniqueMap.values());
+    }
+
     let globalMembers = JSON.parse(safeStorageGet('boksakol_sunday_members_v32')) || [...DEFAULT_MEMBERS];
     let rawLogs = JSON.parse(safeStorageGet('boksakol_sunday_logs_v32')) || [];
-    let globalLogs = rawLogs.filter(l => [10, 5, 99].includes(Number(l.score)));
+    let globalLogs = normalizeLogsList(rawLogs);
     let dateEvents = JSON.parse(safeStorageGet('boksakol_sunday_events_v32')) || {};
 
     let adminPassword = safeStorageGet('boksakol_sunday_admin_pwd') || "1234";
     let isAdminLoggedIn = sessionStorage.getItem('boksakol_sunday_admin_logged_in') === 'true';
     let adminSearchKeyword = "";
 
-    let selectedDateStr = safeStorageGet('boksakol_sunday_selected_date') || "";
+    let selectedDateStr = normalizeKoreanFullDate(safeStorageGet('boksakol_sunday_selected_date')) || "";
     let checkinSelectedMonth = safeStorageGet('boksakol_sunday_selected_month') || (String(new Date().getMonth() + 1) + "월");
     let statsSelectedMonth = "전체";
     let activePaneIndex = 0;
@@ -297,29 +344,6 @@
         setTimeout(calculate, 200);
     }
 
-    function formatDateToString(dateObj) {
-        const years = dateObj.getFullYear();
-        const months = dateObj.getMonth() + 1;
-        const days = dateObj.getDate();
-        const weekDays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-        return `${years}년 ${months}월 ${days}일 ${weekDays[dateObj.getDay()]}`;
-    }
-
-    function normalizeEventDateKey(val) {
-        const s = String(val || "").trim();
-        if (!s) return "";
-        const korMatch = s.match(/(\d{4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일/);
-        if (korMatch) {
-            const dt = new Date(Number(korMatch[1]), Number(korMatch[2]) - 1, Number(korMatch[3]));
-            if (!isNaN(dt.getTime())) return formatDateToString(dt);
-        }
-        const parsed = new Date(s);
-        if (!isNaN(parsed.getTime())) {
-            return formatDateToString(parsed);
-        }
-        return s;
-    }
-
     function getAllSundaysOfCurrentYear() {
         const sundays = [];
         let d = new Date(currentYear, 0, 1);
@@ -334,11 +358,11 @@
     const allSundays = getAllSundaysOfCurrentYear();
 
     function getEventForDate(dStr) {
-        const targetKey = normalizeEventDateKey(dStr);
+        const targetKey = normalizeKoreanFullDate(dStr);
         if (!targetKey) return "";
         if (dateEvents[targetKey]) return dateEvents[targetKey];
         for (const [k, v] of Object.entries(dateEvents || {})) {
-            if (normalizeEventDateKey(k) === targetKey && String(v || "").trim()) {
+            if (normalizeKoreanFullDate(k) === targetKey && String(v || "").trim()) {
                 return String(v).trim();
             }
         }
@@ -463,7 +487,7 @@
 
         const dateStatsMap = {};
         globalLogs.forEach(log => {
-            const dStr = String(log.date).trim();
+            const dStr = normalizeKoreanFullDate(log.date);
             const sNum = Number(log.score);
             if ([10, 5, 99].includes(sNum)) {
                 if (!dateStatsMap[dStr]) {
@@ -555,7 +579,7 @@
 
     function saveLocally() {
         sortMembers();
-        globalLogs = globalLogs.filter(l => [10, 5, 99].includes(Number(l.score)));
+        globalLogs = normalizeLogsList(globalLogs);
         safeStorageSet('boksakol_sunday_members_v32', JSON.stringify(globalMembers));
         safeStorageSet('boksakol_sunday_logs_v32', JSON.stringify(globalLogs));
         safeStorageSet('boksakol_sunday_events_v32', JSON.stringify(dateEvents));
@@ -573,20 +597,15 @@
                     globalMembers = resData.members;
                 }
                 if (resData.logs && Array.isArray(resData.logs)) {
-                    const uniqueMap = new Map();
-                    resData.logs.forEach(l => {
-                        const sNum = Number(l.score);
-                        if (l.name && l.date && [10, 5, 99].includes(sNum)) {
-                            const key = String(l.date).trim() + "_" + String(l.name).trim();
-                            uniqueMap.set(key, { name: String(l.name).trim(), date: String(l.date).trim(), score: sNum, month: l.month });
-                        }
-                    });
-                    globalLogs = Array.from(uniqueMap.values());
+                    const serverLogs = normalizeLogsList(resData.logs);
+                    if (serverLogs.length > 0 || globalLogs.length === 0) {
+                        globalLogs = serverLogs;
+                    }
                 }
                 if (resData.events && typeof resData.events === "object") {
                     const cleanedEvents = {};
                     Object.entries(resData.events).forEach(([k, v]) => {
-                        const normKey = normalizeEventDateKey(k);
+                        const normKey = normalizeKoreanFullDate(k);
                         const title = String(v || "").trim();
                         if (normKey && title) {
                             cleanedEvents[normKey] = title;
@@ -606,15 +625,7 @@
 
     async function saveDataToSheet() {
         sortMembers();
-        const uniqueMap = new Map();
-        globalLogs.forEach(l => {
-            const sNum = Number(l.score);
-            if (l.name && l.date && [10, 5, 99].includes(sNum)) {
-                const key = String(l.date).trim() + "_" + String(l.name).trim();
-                uniqueMap.set(key, { name: String(l.name).trim(), date: String(l.date).trim(), score: sNum, month: l.month });
-            }
-        });
-        globalLogs = Array.from(uniqueMap.values());
+        globalLogs = normalizeLogsList(globalLogs);
         saveLocally();
 
         try {
@@ -631,7 +642,7 @@
             if (resData && resData.events && typeof resData.events === "object") {
                 const serverEvents = {};
                 Object.entries(resData.events).forEach(([k, v]) => {
-                    const normKey = normalizeEventDateKey(k);
+                    const normKey = normalizeKoreanFullDate(k);
                     const title = String(v || "").trim();
                     if (normKey && title) {
                         serverEvents[normKey] = title;
@@ -670,7 +681,7 @@
             return;
         }
         entries.forEach(([dStr, title]) => {
-            const displayKey = normalizeEventDateKey(dStr).replace(/^\d{4}년\s*/, '');
+            const displayKey = normalizeKoreanFullDate(dStr).replace(/^\d{4}년\s*/, '');
             const row = document.createElement('div');
             row.className = 'admin-member-row';
             row.innerHTML = `
@@ -686,7 +697,7 @@
         const select = document.getElementById('event-date-select');
         const input = document.getElementById('event-title-input');
         if (!select || !input) return;
-        const dStr = normalizeEventDateKey(select.value);
+        const dStr = normalizeKoreanFullDate(select.value);
         const title = input.value.trim();
         if (!dStr) {
             alert("날짜를 선택해주세요.");
@@ -710,11 +721,11 @@
 
     async function removeDateEvent(dStr) {
         if (!isAdminLoggedIn) return;
-        const targetKey = normalizeEventDateKey(dStr);
+        const targetKey = normalizeKoreanFullDate(dStr);
         delete dateEvents[dStr];
         delete dateEvents[targetKey];
         for (const k of Object.keys(dateEvents)) {
-            if (normalizeEventDateKey(k) === targetKey) {
+            if (normalizeKoreanFullDate(k) === targetKey) {
                 delete dateEvents[k];
             }
         }
@@ -856,9 +867,10 @@
         }
 
         const dayAttendance = {};
+        const targetNormDate = normalizeKoreanFullDate(selectedDateStr);
         globalLogs.forEach(log => {
             const sNum = Number(log.score);
-            if (String(log.date).trim() === String(selectedDateStr).trim() && [10, 5, 99].includes(sNum)) {
+            if (normalizeKoreanFullDate(log.date) === targetNormDate && [10, 5, 99].includes(sNum)) {
                 dayAttendance[String(log.name).trim()] = sNum;
             }
         });
@@ -1039,7 +1051,7 @@
         }
 
         const cleanName = String(name).trim();
-        const targetDate = selectedDateStr;
+        const targetDate = normalizeKoreanFullDate(selectedDateStr);
 
         if (!targetDate || targetDate === "" || targetDate === "undefined") {
             alert("날짜가 올바르지 않습니다. 다시 선택해주세요.");
@@ -1061,7 +1073,7 @@
             if (!confirm(`[${targetDate.replace(/^\d{4}년\s*/, '')}] [${cleanName}]님을 [${label}]으로 기록하시겠습니까?`)) return;
         }
 
-        globalLogs = globalLogs.filter(log => !(String(log.name).trim() === cleanName && String(log.date).trim() === targetDate));
+        globalLogs = globalLogs.filter(log => !(String(log.name).trim() === cleanName && normalizeKoreanFullDate(log.date) === targetDate));
         
         if ([10, 5, 99].includes(score)) {
             let mMatch = targetDate.match(/(\d+)월/);
@@ -1110,9 +1122,10 @@
         const uniqueLogs = new Map();
         globalLogs.forEach(log => {
             const sNum = Number(log.score);
-            if (log.name && log.date && [10, 5, 99].includes(sNum)) {
-                const key = String(log.date).trim() + "_" + String(log.name).trim();
-                uniqueLogs.set(key, { name: String(log.name).trim(), date: String(log.date).trim(), score: sNum, month: log.month });
+            const normDate = normalizeKoreanFullDate(log.date);
+            if (log.name && normDate && [10, 5, 99].includes(sNum)) {
+                const key = normDate + "_" + String(log.name).trim();
+                uniqueLogs.set(key, { name: String(log.name).trim(), date: normDate, score: sNum, month: log.month });
             }
         });
 
@@ -1283,6 +1296,10 @@
         await loadDataFromSheet();
         renderSundayVerticalList();
         renderStats();
+        if (isAdminLoggedIn) {
+            populateEventDateSelect();
+            renderAdminEventList();
+        }
     }
 
     if (document.readyState === 'loading') {
