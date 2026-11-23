@@ -90,7 +90,6 @@
         .checkin-triple-container { display: flex; gap: 6px; margin-bottom: 10px; width: 100%; box-sizing: border-box; padding: 0; align-items: stretch; }
         .checkin-column-box { flex: 1; border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 4px; display: flex; flex-direction: column; min-width: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); box-sizing: border-box; }
         
-        /* 각 박스별 자연스러운 동일 계열 배경색 적용 */
         .col-workout { background-color: #f0fdf4; border-color: #bbf7d0; }
         .col-attend { background-color: #f0f9ff; border-color: #bae6fd; }
         .col-comp { background-color: #fffbeb; border-color: #fde68a; }
@@ -98,7 +97,6 @@
         .checkin-column-title { font-size: 0.82rem; font-weight: 800; text-align: center; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1.5px solid rgba(0,0,0,0.06); white-space: nowrap; line-height: 1.2; }
         .checkin-column-sub { font-size: 0.68rem; font-weight: 700; opacity: 0.85; display: block; margin-top: 1px; }
         
-        /* 세로로 인원이 늘어나도 스크롤 없이 쭉쭉 길어지도록 max-height 제거 및 높이 자동 조절 */
         .checkin-column-names { display: flex; flex-direction: column; gap: 2px; font-size: 0.8rem; font-weight: 600; color: var(--text-main); text-align: left; padding: 0 2px; }
         
         .checkin-name-item { background: transparent; padding: 3px 2px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; gap: 4px; border: none; box-shadow: none; }
@@ -106,7 +104,7 @@
         .checkin-name-item.admin-clickable:hover { background: rgba(0,0,0,0.05); color: var(--accent); }
         .checkin-item-num { color: #64748b; font-size: 0.72rem; font-weight: 700; min-width: 16px; text-align: right; flex-shrink: 0; }
 
-        /* 미참석 회원 카드 스타일 */
+        /* 관리자 전용 회원 체크 카드 스타일 */
         .member-card { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; margin-bottom: 5px; background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 7px; gap: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); width: 100%; box-sizing: border-box; }
         .member-info { display: flex; align-items: center; gap: 6px; flex-shrink: 0; min-width: 95px; }
         .member-name { font-weight: 700; font-size: 0.9rem; color: var(--primary); display: flex; align-items: center; gap: 4px; white-space: nowrap; }
@@ -159,7 +157,6 @@
         <div class="main-title">🏃‍♂️ 복사골 일요운동 출석부</div>
     </div>
 
-    <!-- 관리자 로그인 시에만 표시되는 상단 상태 바 -->
     <div id="admin-status-bar" class="admin-status-bar hidden">
         <span>🔐 관리자 모드 (출석체크·일정관리 활성)</span>
         <button type="button" class="admin-logout-btn" onclick="logoutAdminMode()">로그아웃</button>
@@ -181,7 +178,6 @@
                     <div class="sunday-vertical-group" id="sunday-vertical-wrapper"></div>
                 </div>
 
-                <!-- 출석현황 및 관리자 출석체크 영역 -->
                 <div id="member-list" class="loading">데이터 로딩 중...</div>
             </div>
 
@@ -790,10 +786,10 @@
             }
         });
 
-        const workoutList = []; // 10점 (참석(운동))
-        const attendList = [];  // 5점 (참석)
-        const compList = [];    // 99점 (대회)
-        const uncheckList = []; // 미참석
+        const workoutList = []; 
+        const attendList = [];  
+        const compList = [];    
+        const uncheckList = []; 
 
         globalMembers.forEach(member => {
             const name = String(member.name || "").trim();
@@ -1128,7 +1124,6 @@
 
         const tbody = table.querySelector('tbody');
         let currentRank = 1;
-        let totalWorkout = 0, totalAttend = 0, totalComp = 0, totalScore = 0;
 
         displayList.forEach((item, index) => {
             if (index > 0 && item.score < displayList[index - 1].score) currentRank = index + 1;
@@ -1148,22 +1143,6 @@
             `;
             tbody.appendChild(tr);
         });
-
-        sheetWrap.appendChild(table);
-        statsDiv.appendChild(sheetWrap);
-        updateSwipeWrapperHeight();
-
-        const sumTr = document.createElement('tr');
-        sumTr.style.cssText = "background:#e2e8f0; border-top:2px solid #64748b;";
-        sumTr.innerHTML = `
-            <td class="col-rank" style="color:#0f172a;">합계</td>
-            <td class="col-name" style="color:#0f172a;">${displayList.length}명</td>
-            <td class="col-w" style="color:#0f172a;">${totalWorkout}</td>
-            <td class="col-a" style="color:#0f172a;">${totalAttend}</td>
-            <td class="col-c" style="color:#0f172a;">${totalComp}</td>
-            <td class="col-pts" style="background:#cbd5e1; color:#0f172a;">${totalScore}점</td>
-        `;
-        tbody.appendChild(sumTr);
 
         sheetWrap.appendChild(table);
         statsDiv.appendChild(sheetWrap);
