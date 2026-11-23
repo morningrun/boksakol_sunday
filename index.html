@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>복사골마라톤클럽 일요운동 출석부</title>
-    
-    <link rel="apple-touch-icon" href="total_sunday_og.png">
-    <link rel="icon" sizes="192x192" href="total_sunday_og.png">
-    <link rel="icon" href="total_sunday_og.png" type="image/png">
+
+    <link rel="apple-touch-icon" href="sunday_attendance_og.jpg">
+    <link rel="icon" sizes="192x192" href="sunday_attendance_og.jpg">
+    <link rel="icon" href="sunday_attendance_og.jpg" type="image/jpeg">
 
     <meta property="og:type" content="website">
     <meta property="og:title" content="복사골마라톤클럽 일요운동 출석부">
     <meta property="og:description" content="일요일 달리기 모임 출석 및 누적현황 관리 시스템">
-    <meta property="og:image" content="https://morningrun.github.io/boksakol/total_sunday_og.png">
+    <meta property="og:image" content="https://morningrun.github.io/boksakol/sunday_attendance_og.jpg">
     <meta property="og:url" content="https://morningrun.github.io/boksakol/">
 
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -25,9 +25,9 @@
         :root {
             --primary: #0f172a;
             --accent: #2563eb;
-            --success: #059669;    
-            --info: #0284c7;        
-            --warning: #d97706;    
+            --success: #059669;
+            --info: #0284c7;
+            --warning: #d97706;
             --danger: #dc2626;
             --bg-color: #f1f5f9;
             --card-bg: #ffffff;
@@ -38,22 +38,26 @@
 
         html { width: 100%; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg-color); margin: 0; padding: 6px; color: var(--text-main); -webkit-tap-highlight-color: transparent; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-        
+
         .container { max-width: 600px; width: 100%; box-sizing: border-box; margin: 0 auto; background: var(--card-bg); padding: 10px; border-radius: 12px; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08); }
-        
-        .main-title-box { text-align: center; margin: 4px 0 8px 0; }
-        .main-title { font-size: 1.5rem; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
+
+        .main-title-box { text-align: center; margin: 4px 0 6px 0; }
+        .main-title { font-size: 1.42rem; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
+
+        .sync-status-banner { text-align: center; font-size: 0.75rem; font-weight: 700; padding: 5px 8px; border-radius: 7px; margin-bottom: 8px; background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+        .sync-status-banner.ok { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+        .sync-status-banner.warn { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
 
         .admin-status-bar { display: flex; justify-content: space-between; align-items: center; background: #eff6ff; border: 1.5px solid #93c5fd; color: #1e40af; padding: 6px 10px; border-radius: 8px; margin-bottom: 8px; font-size: 0.78rem; font-weight: 800; }
         .admin-logout-btn { background: #1e40af; color: #ffffff; border: none; border-radius: 5px; padding: 4px 8px; font-size: 0.72rem; font-weight: 800; cursor: pointer; }
-        
+
         .tab-group { display: flex; gap: 6px; margin-bottom: 10px; background: #cbd5e1; padding: 3px; border-radius: 10px; position: sticky; top: 4px; z-index: 10; backdrop-filter: blur(8px); }
         .tab-btn { flex: 1; padding: 8px 4px; font-size: 0.88rem; border: none; background: transparent; color: var(--text-sub); font-weight: 700; border-radius: 8px; cursor: pointer; transition: all 0.2s; text-align: center; }
         .tab-btn.active { background: var(--card-bg); color: var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 
         .swipe-wrapper { width: 100%; position: relative; overflow: hidden; min-height: 360px; box-sizing: border-box; transition: height 0.2s ease; }
         .swipe-container { display: flex; width: 200%; transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); will-change: transform; align-items: flex-start; box-sizing: border-box; }
-        
+
         .swipe-pane { width: 50%; flex-shrink: 0; box-sizing: border-box; opacity: 0; transition: opacity 0.2s ease; pointer-events: none; visibility: hidden; padding: 0 2px; }
         .swipe-pane.active-pane { opacity: 1; pointer-events: auto; visibility: visible; height: auto; }
 
@@ -72,32 +76,32 @@
         .sunday-list-box { background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 8px; margin-bottom: 8px; }
         .sunday-list-title { font-size: 0.85rem; font-weight: 800; color: var(--primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
         .sunday-vertical-group { display: flex; flex-direction: column; gap: 5px; }
-        
+
         .sunday-item-btn { padding: 8px 10px; background: #ffffff; border: 1px solid var(--border); border-radius: 7px; cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 3px; transition: all 0.2s; }
         .sunday-item-btn.active { background: #eff6ff; color: var(--accent); border: 2px solid var(--accent); }
         .sunday-item-btn.disabled { background: #f1f5f9; color: #94a3b8; border-color: var(--border); cursor: not-allowed; opacity: 0.7; }
         .sunday-item-btn.event-locked { background: #fff7ed; border-color: #fdba74; color: #9a3412; }
-        
+
         .sunday-date-text { font-size: 0.85rem; font-weight: 800; color: var(--primary); }
         .sunday-item-btn.active .sunday-date-text { color: var(--accent); }
         .sunday-item-btn.event-locked .sunday-date-text { color: #9a3412; }
-        
+
         .sunday-stat-badge { font-size: 0.73rem; font-weight: 700; color: #475569; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; display: inline-block; width: fit-content; }
         .sunday-item-btn.active .sunday-stat-badge { background: #dbeafe; color: #1e40af; }
         .sunday-event-badge { font-size: 0.73rem; font-weight: 800; color: #9a3412; background: #ffedd5; padding: 2px 6px; border-radius: 4px; display: inline-block; width: fit-content; }
 
         .checkin-triple-container { display: flex; gap: 6px; margin-bottom: 10px; width: 100%; box-sizing: border-box; padding: 0; align-items: stretch; }
         .checkin-column-box { flex: 1; border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 4px; display: flex; flex-direction: column; min-width: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); box-sizing: border-box; }
-        
+
         .col-workout { background-color: #f0fdf4; border-color: #bbf7d0; }
         .col-attend { background-color: #f0f9ff; border-color: #bae6fd; }
         .col-comp { background-color: #fffbeb; border-color: #fde68a; }
 
         .checkin-column-title { font-size: 0.82rem; font-weight: 800; text-align: center; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1.5px solid rgba(0,0,0,0.06); white-space: nowrap; line-height: 1.2; }
         .checkin-column-sub { font-size: 0.68rem; font-weight: 700; opacity: 0.85; display: block; margin-top: 1px; }
-        
+
         .checkin-column-names { display: flex; flex-direction: column; gap: 2px; font-size: 0.8rem; font-weight: 600; color: var(--text-main); text-align: left; padding: 0 2px; }
-        
+
         .checkin-name-item { background: transparent; padding: 3px 2px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; gap: 4px; border: none; box-shadow: none; }
         .checkin-name-item.admin-clickable { cursor: pointer; transition: background 0.15s; }
         .checkin-name-item.admin-clickable:hover { background: rgba(0,0,0,0.05); color: var(--accent); }
@@ -107,7 +111,7 @@
         .member-info { display: flex; align-items: center; gap: 6px; flex-shrink: 0; min-width: 95px; }
         .member-name { font-weight: 700; font-size: 0.9rem; color: var(--primary); display: flex; align-items: center; gap: 4px; white-space: nowrap; }
         .member-index { font-size: 0.72rem; color: #64748b; font-weight: 700; width: 20px; text-align: right; }
-        
+
         .btn-group { display: flex; gap: 3px; flex: 1; justify-content: flex-end; }
         .btn-group button { flex: 1; padding: 6px 2px; font-size: 0.72rem; border: 1px solid var(--border); border-radius: 5px; cursor: pointer; font-weight: 700; background: #f8fafc; color: var(--text-sub); text-align: center; white-space: nowrap; }
         .btn-group button:hover { background: #eff6ff; border-color: var(--accent); color: var(--accent); }
@@ -134,10 +138,10 @@
         .admin-input-group { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
         .admin-input-group input, .admin-input-group select { flex: 1; min-width: 120px; padding: 8px 10px; border-radius: 6px; border: none; font-size: 0.85rem; outline: none; color: #0f172a; }
         .admin-input-group button { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: 800; cursor: pointer; white-space: nowrap; }
-        
+
         .admin-member-row { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 6px 10px; border-radius: 6px; margin-bottom: 5px; font-size: 0.85rem; border: 1px solid #334155; gap: 8px; }
         .admin-member-row button { background: var(--danger); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 700; white-space: nowrap; }
-        
+
         .footer-setting-box { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 12px; padding-top: 8px; border-top: 1.5px solid var(--border); }
         .footer-hint { font-size: 0.73rem; color: #64748b; font-weight: 600; }
         .admin-gear-icon-btn { background: #f8fafc; border: 1.5px solid var(--border); font-size: 0.85rem; cursor: pointer; padding: 5px 9px; color: var(--text-sub); border-radius: 7px; font-weight: 800; }
@@ -153,12 +157,13 @@
     <div class="main-title-box">
         <div class="main-title">🏃‍♂️ 복사골 일요운동 출석부</div>
     </div>
+    <div id="sync-status-banner" class="sync-status-banner">🔄 구글 시트 연결 중...</div>
 
     <div id="admin-status-bar" class="admin-status-bar hidden">
         <span>🔐 관리자 모드 (출석체크·일정관리 활성)</span>
         <button type="button" class="admin-logout-btn" onclick="logoutAdminMode()">로그아웃</button>
     </div>
-    
+
     <div class="tab-group">
         <button class="tab-btn active" id="tab-checkin-btn">📅 출석현황</button>
         <button class="tab-btn" id="tab-stats-btn">🏆 <span id="current-year-text">2026</span>년 누적현황</button>
@@ -168,7 +173,7 @@
         <div id="swipe-container" class="swipe-container">
             <div class="swipe-pane active-pane" id="pane-checkin">
                 <div class="month-filter" id="checkin-month-buttons"></div>
-                
+
                 <div class="sunday-list-box">
                     <div class="sunday-list-title" id="sunday-list-header">📅 2026년 11월 일요운동 출석현황</div>
                     <div class="sunday-vertical-group" id="sunday-vertical-wrapper"></div>
@@ -191,12 +196,12 @@
         <h3 style="margin-top:6px;">📌 일요일 공식대회·행사 등록 (출석체크 제한)</h3>
         <div class="admin-input-group">
             <select id="event-date-select"></select>
-            <input type="text" id="event-title-input" placeholder="예: 1/4분기 공식대회, 야유회">
+            <input type="text" id="event-title-input" placeholder="예: 4/4공식대회(2026인천마라톤)">
             <button type="button" onclick="saveDateEvent()" style="background:#d97706;">행사 등록</button>
         </div>
         <div id="admin-event-list" style="margin-bottom:10px;"></div>
-        
-        <h3 style="margin-top:10px;">🔑 관리자 비밀번호 변경</h3>
+
+        <h3 style="margin-top:10px;">🔑 관리자 비밀번호 변경 (PC·휴대폰 공용)</h3>
         <div class="admin-input-group">
             <input type="password" id="new-admin-password" placeholder="새 비밀번호 입력">
             <button type="button" onclick="changePassword()" style="background:#059669;">비밀번호 변경</button>
@@ -218,46 +223,41 @@
 </div>
 
 <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzp7kE0cSzvrynGMsyh4XQfsumOryDVDvsRtD3meq9p20HwQeKYzri4kI4SIZc2i4nv/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw-mKHXCrPVHi2xOWhUSwF43mEfr1bAHGGY0Kby3rKX70skpcXEQVSbMfxBGgh4ZO9OFg/exec";
 
     const DEFAULT_MEMBERS = [
-        { name: "김창선" }, { name: "방철규" }, { name: "정도영" }, { name: "정범희" }, 
-        { name: "조한복" }, { name: "지덕수" }, { name: "필동만" }, { name: "이석형" }, 
-        { name: "김종수" }, { name: "이재학" }, { name: "심재현" }, { name: "이현석" }, 
-        { name: "장경문" }, { name: "최병일" }, { name: "김봉근" }, { name: "김윤찬" }, 
-        { name: "황문섭" }, { name: "이달재" }, { name: "윤영종" }, { name: "이실권" }, 
-        { name: "권용문" }, { name: "정세원" }, { name: "윤명기" }, { name: "서문오룡" }, 
-        { name: "이원우" }, { name: "김기중" }, { name: "정일흥" }, { name: "최기석" }, 
-        { name: "김영학" }, { name: "이구철" }, { name: "김귀동" }, { name: "김정균" }, 
-        { name: "이세형" }, { name: "송영숙" }, { name: "박광남" }, { name: "이도희" }, 
-        { name: "이청규" }, { name: "송재동" }, { name: "이강훈" }, { name: "은대영" }, 
-        { name: "조성국" }, { name: "김덕원" }, { name: "최정엽" }, { name: "정하근" }, 
-        { name: "김태수" }, { name: "김경기" }, { name: "임윤석" }, { name: "남중원" }, 
-        { name: "이재응" }, { name: "조재광" }, { name: "김형섭" }, { name: "변흥주" }, 
-        { name: "최순규" }, { name: "박정호" }, { name: "이주영" }, { name: "박정후" }, 
-        { name: "이해식" }, { name: "진용남" }, { name: "임장수" }, { name: "이동섭" }, 
-        { name: "김미향" }, { name: "김정구" }, { name: "박한라" }, { name: "이현조" }, 
-        { name: "정현주" }, { name: "최규식" }, { name: "김진철" }, { name: "이은순" }, 
-        { name: "노현종" }, { name: "곽병우" }, { name: "김장곤" }, { name: "이동기" }, 
-        { name: "민병일" }, { name: "이학조" }, { name: "박지혜" }, { name: "최잔디" }, 
-        { name: "이정숙" }, { name: "김은성" }, { name: "이종호" }, { name: "정호진" }, 
-        { name: "이호병" }, { name: "방지원" }, { name: "황연성" }, { name: "노진규" }
+        { name: "곽병우" }, { name: "권용문" }, { name: "김경기" }, { name: "김귀동" }, { name: "김기중" },
+        { name: "김덕원" }, { name: "김미향" }, { name: "김봉근" }, { name: "김영학" }, { name: "김윤찬" },
+        { name: "김은성" }, { name: "김장곤" }, { name: "김정구" }, { name: "김정균" }, { name: "김종수" },
+        { name: "김진철" }, { name: "김창선" }, { name: "김태수" }, { name: "김형섭" }, { name: "남중원" },
+        { name: "노진규" }, { name: "노현종" }, { name: "민병일" }, { name: "박광남" }, { name: "박정호" },
+        { name: "박정후" }, { name: "박지혜" }, { name: "박한라" }, { name: "방지원" }, { name: "방철규" },
+        { name: "변흥주" }, { name: "서문오룡" }, { name: "송영숙" }, { name: "송재동" }, { name: "심재현" },
+        { name: "윤명기" }, { name: "윤영종" }, { name: "은대영" }, { name: "이강훈" }, { name: "이구철" },
+        { name: "이달재" }, { name: "이도희" }, { name: "이동기" }, { name: "이동섭" }, { name: "이석형" },
+        { name: "이세형" }, { name: "이실권" }, { name: "이원우" }, { name: "이은순" }, { name: "이재응" },
+        { name: "이재학" }, { name: "이정숙" }, { name: "이종호" }, { name: "이주영" }, { name: "이청규" },
+        { name: "이학조" }, { name: "이해식" }, { name: "이현석" }, { name: "이현조" }, { name: "이호병" },
+        { name: "임윤석" }, { name: "임장수" }, { name: "장경문" }, { name: "정도영" }, { name: "정범희" },
+        { name: "정세원" }, { name: "정일흥" }, { name: "정하근" }, { name: "정현주" }, { name: "정호진" },
+        { name: "조성국" }, { name: "조재광" }, { name: "조한복" }, { name: "지덕수" }, { name: "진용남" },
+        { name: "최규식" }, { name: "최기석" }, { name: "최병일" }, { name: "최순규" }, { name: "최잔디" },
+        { name: "최정엽" }, { name: "필동만" }, { name: "황문섭" }, { name: "황연성" }
     ];
 
+    function setSyncBanner(type, text) {
+        const el = document.getElementById('sync-status-banner');
+        if (!el) return;
+        el.className = `sync-status-banner ${type || ''}`;
+        el.textContent = text;
+    }
+
     function safeStorageGet(key) {
-        try {
-            return window.localStorage.getItem(key);
-        } catch (e) {
-            return null;
-        }
+        try { return window.localStorage.getItem(key); } catch (e) { return null; }
     }
 
     function safeStorageSet(key, val) {
-        try {
-            window.localStorage.setItem(key, val);
-        } catch (e) {
-            console.warn("localStorage 저장 제한 환경:", key);
-        }
+        try { window.localStorage.setItem(key, val); } catch (e) {}
     }
 
     function formatDateToString(dateObj) {
@@ -282,21 +282,29 @@
             if (!isNaN(dt.getTime())) return formatDateToString(dt);
         }
         const parsed = new Date(s);
-        if (!isNaN(parsed.getTime())) {
-            return formatDateToString(parsed);
-        }
+        if (!isNaN(parsed.getTime())) return formatDateToString(parsed);
         return s;
+    }
+
+    function normalizeScoreValue(raw) {
+        const s = String(raw ?? "").trim();
+        if (s === "10" || s.includes("참석(운동)") || s.includes("운동")) return 10;
+        if (s === "5" || s === "참석") return 5;
+        if (s === "99" || s.includes("대회")) return 99;
+        const num = Number(s);
+        return [10, 5, 99].includes(num) ? num : 0;
     }
 
     function normalizeLogsList(logsArr) {
         if (!Array.isArray(logsArr)) return [];
         const uniqueMap = new Map();
         logsArr.forEach(l => {
-            const name = String(l.name || "").trim();
-            const date = normalizeKoreanFullDate(l.date);
-            const score = Number(l.score);
+            if (!l || typeof l !== "object") return;
+            const name = String(l.name ?? l.Name ?? l.회원명 ?? l.이름 ?? "").trim();
+            const date = normalizeKoreanFullDate(l.date ?? l.Date ?? l.날짜 ?? "");
+            const score = normalizeScoreValue(l.score ?? l.Score ?? l.점수 ?? "");
             if (name && date && [10, 5, 99].includes(score)) {
-                let month = Number(l.month) || 0;
+                let month = Number(l.month ?? l.Month ?? l.월) || 0;
                 if (!month) {
                     const mMatch = date.match(/(\d+)월/);
                     if (mMatch) month = parseInt(mMatch[1], 10);
@@ -307,17 +315,16 @@
         return Array.from(uniqueMap.values());
     }
 
-    let globalMembers = JSON.parse(safeStorageGet('boksakol_sunday_members_v32')) || [...DEFAULT_MEMBERS];
-    let rawLogs = JSON.parse(safeStorageGet('boksakol_sunday_logs_v32')) || [];
-    let globalLogs = normalizeLogsList(rawLogs);
-    let dateEvents = JSON.parse(safeStorageGet('boksakol_sunday_events_v32')) || {};
+    let globalMembers = JSON.parse(safeStorageGet('sunday_members_v26')) || [...DEFAULT_MEMBERS];
+    let globalLogs = normalizeLogsList(JSON.parse(safeStorageGet('sunday_logs_v26')) || []);
+    let dateEvents = JSON.parse(safeStorageGet('sunday_events_v26')) || {};
 
-    let adminPassword = safeStorageGet('boksakol_sunday_admin_pwd') || "1234";
-    let isAdminLoggedIn = sessionStorage.getItem('boksakol_sunday_admin_logged_in') === 'true';
+    let adminPassword = safeStorageGet('sunday_admin_pwd') || "1234";
+    let isAdminLoggedIn = sessionStorage.getItem('sunday_admin_logged_in') === 'true';
     let adminSearchKeyword = "";
 
-    let selectedDateStr = normalizeKoreanFullDate(safeStorageGet('boksakol_sunday_selected_date')) || "";
-    let checkinSelectedMonth = safeStorageGet('boksakol_sunday_selected_month') || (String(new Date().getMonth() + 1) + "월");
+    let selectedDateStr = normalizeKoreanFullDate(safeStorageGet('sunday_selected_date')) || "";
+    let checkinSelectedMonth = safeStorageGet('sunday_selected_month') || (String(new Date().getMonth() + 1) + "월");
     let statsSelectedMonth = "전체";
     let activePaneIndex = 0;
 
@@ -327,16 +334,10 @@
     function updateSwipeWrapperHeight() {
         const calculate = () => {
             const wrapper = document.getElementById('swipe-wrapper');
-            const panes = [
-                document.getElementById('pane-checkin'),
-                document.getElementById('pane-stats')
-            ];
+            const panes = [document.getElementById('pane-checkin'), document.getElementById('pane-stats')];
             if (wrapper && panes[activePaneIndex]) {
-                const targetPane = panes[activePaneIndex];
-                const targetHeight = targetPane.scrollHeight;
-                if (targetHeight > 0) {
-                    wrapper.style.height = (targetHeight + 20) + 'px';
-                }
+                const targetHeight = panes[activePaneIndex].scrollHeight;
+                if (targetHeight > 0) wrapper.style.height = (targetHeight + 20) + 'px';
             }
         };
         requestAnimationFrame(calculate);
@@ -394,7 +395,7 @@
         ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"].forEach(m => {
             const mNum = parseInt(m.replace("월", ""), 10);
             const btn = document.createElement('button');
-            
+
             if (mNum > currentMonthNum) {
                 btn.className = 'month-btn disabled';
                 btn.style.background = '#f1f5f9';
@@ -408,12 +409,12 @@
                 btn.innerText = m;
                 btn.onclick = () => {
                     document.querySelectorAll('#checkin-month-buttons .month-btn').forEach(b => {
-                        if(!b.classList.contains('disabled')) b.classList.remove('active');
+                        if (!b.classList.contains('disabled')) b.classList.remove('active');
                     });
                     btn.classList.add('active');
                     checkinSelectedMonth = m;
-                    safeStorageSet('boksakol_sunday_selected_month', m);
-                    
+                    safeStorageSet('sunday_selected_month', m);
+
                     const filtered = allSundays.filter(dStr => {
                         const mMatch = dStr.match(/(\d+)월/);
                         return mMatch && (mMatch[1] + "월") === m;
@@ -427,7 +428,7 @@
                             return tDate <= today;
                         });
                         selectedDateStr = validFiltered.length > 0 ? validFiltered[validFiltered.length - 1] : filtered[0];
-                        safeStorageSet('boksakol_sunday_selected_date', selectedDateStr);
+                        safeStorageSet('sunday_selected_date', selectedDateStr);
                     }
                     renderSundayVerticalList();
                 };
@@ -446,8 +447,8 @@
             btn.onclick = () => {
                 document.querySelectorAll('#stats-month-buttons .month-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                statsSelectedMonth = m; 
-                renderStats();    
+                statsSelectedMonth = m;
+                renderStats();
             };
             wrapper.appendChild(btn);
         });
@@ -490,9 +491,7 @@
             const dStr = normalizeKoreanFullDate(log.date);
             const sNum = Number(log.score);
             if ([10, 5, 99].includes(sNum)) {
-                if (!dateStatsMap[dStr]) {
-                    dateStatsMap[dStr] = { workout: 0, attend: 0, comp: 0, total: 0 };
-                }
+                if (!dateStatsMap[dStr]) dateStatsMap[dStr] = { workout: 0, attend: 0, comp: 0, total: 0 };
                 if (sNum === 10) dateStatsMap[dStr].workout += 1;
                 else if (sNum === 5) dateStatsMap[dStr].attend += 1;
                 else if (sNum === 99) dateStatsMap[dStr].comp += 1;
@@ -505,7 +504,7 @@
             const cleanDateStr = dStr.replace(/년|월/g, '-').replace(/일.*/, '').trim();
             const targetDate = new Date(cleanDateStr);
             targetDate.setHours(0, 0, 0, 0);
-            
+
             const isFuture = targetDate > today;
             const isSelected = (dStr === selectedDateStr);
             const eventTitle = getEventForDate(dStr);
@@ -524,7 +523,7 @@
                 `;
                 btn.onclick = () => {
                     selectedDateStr = dStr;
-                    safeStorageSet('boksakol_sunday_selected_date', dStr);
+                    safeStorageSet('sunday_selected_date', dStr);
                     renderSundayVerticalList();
                 };
             } else {
@@ -535,7 +534,7 @@
                 `;
                 btn.onclick = () => {
                     selectedDateStr = dStr;
-                    safeStorageSet('boksakol_sunday_selected_date', dStr);
+                    safeStorageSet('sunday_selected_date', dStr);
                     renderSundayVerticalList();
                 };
             }
@@ -580,9 +579,38 @@
     function saveLocally() {
         sortMembers();
         globalLogs = normalizeLogsList(globalLogs);
-        safeStorageSet('boksakol_sunday_members_v32', JSON.stringify(globalMembers));
-        safeStorageSet('boksakol_sunday_logs_v32', JSON.stringify(globalLogs));
-        safeStorageSet('boksakol_sunday_events_v32', JSON.stringify(dateEvents));
+        safeStorageSet('sunday_members_v26', JSON.stringify(globalMembers));
+        safeStorageSet('sunday_logs_v26', JSON.stringify(globalLogs));
+        safeStorageSet('sunday_events_v26', JSON.stringify(dateEvents));
+        safeStorageSet('sunday_admin_pwd', adminPassword);
+    }
+
+    function applyServerPayload(resData) {
+        if (!resData || typeof resData !== "object") return false;
+        const payload = resData.data && typeof resData.data === "object" ? resData.data : resData;
+
+        if (Array.isArray(payload.members) && payload.members.length > 0) {
+            globalMembers = payload.members.map(m => (typeof m === "string" ? { name: m } : m));
+        }
+        if (Array.isArray(payload.logs)) {
+            globalLogs = normalizeLogsList(payload.logs);
+        } else if (Array.isArray(payload)) {
+            globalLogs = normalizeLogsList(payload);
+        }
+        if (payload.events && typeof payload.events === "object") {
+            const cleanedEvents = {};
+            Object.entries(payload.events).forEach(([k, v]) => {
+                const normKey = normalizeKoreanFullDate(k);
+                const title = String(v || "").trim();
+                if (normKey && title) cleanedEvents[normKey] = title;
+            });
+            dateEvents = cleanedEvents;
+        }
+        if (payload.adminPassword && String(payload.adminPassword).trim()) {
+            adminPassword = String(payload.adminPassword).trim();
+        }
+        saveLocally();
+        return true;
     }
 
     async function loadDataFromSheet() {
@@ -591,34 +619,20 @@
                 method: 'POST',
                 body: JSON.stringify({ action: "getData" })
             });
-            const resData = await res.json();
-            if (resData.status === "success") {
-                if (resData.members && Array.isArray(resData.members) && resData.members.length > 0) {
-                    globalMembers = resData.members;
-                }
-                if (resData.logs && Array.isArray(resData.logs)) {
-                    const serverLogs = normalizeLogsList(resData.logs);
-                    if (serverLogs.length > 0 || globalLogs.length === 0) {
-                        globalLogs = serverLogs;
-                    }
-                }
-                if (resData.events && typeof resData.events === "object") {
-                    const cleanedEvents = {};
-                    Object.entries(resData.events).forEach(([k, v]) => {
-                        const normKey = normalizeKoreanFullDate(k);
-                        const title = String(v || "").trim();
-                        if (normKey && title) {
-                            cleanedEvents[normKey] = title;
-                        }
-                    });
-                    if (Object.keys(cleanedEvents).length > 0 || Object.keys(dateEvents).length === 0) {
-                        dateEvents = cleanedEvents;
-                    }
-                }
-                saveLocally();
-            }
+            const text = await res.text();
+            const resData = JSON.parse(text);
+            applyServerPayload(resData);
+            setSyncBanner('ok', `✅ 시트 동기화 완료 (출석 기록 ${globalLogs.length}건)`);
         } catch (e) {
-            console.error("구글 시트 로드 실패, 로컬 데이터 유지", e);
+            try {
+                const getRes = await fetch(GOOGLE_SCRIPT_URL);
+                const getText = await getRes.text();
+                const getData = JSON.parse(getText);
+                applyServerPayload(getData);
+                setSyncBanner('ok', `✅ 시트 동기화 완료 (출석 기록 ${globalLogs.length}건)`);
+            } catch (e2) {
+                setSyncBanner('warn', `⚠️ 구글 시트 연결 실패 (로컬 기록 ${globalLogs.length}건 표시)`);
+            }
         }
         sortMembers();
     }
@@ -635,24 +649,28 @@
                     action: "saveData",
                     members: globalMembers,
                     logs: globalLogs,
-                    events: dateEvents
+                    events: dateEvents,
+                    adminPassword: adminPassword
                 })
             });
-            const resData = await res.json();
+            const text = await res.text();
+            const resData = JSON.parse(text);
             if (resData && resData.events && typeof resData.events === "object") {
                 const serverEvents = {};
                 Object.entries(resData.events).forEach(([k, v]) => {
                     const normKey = normalizeKoreanFullDate(k);
                     const title = String(v || "").trim();
-                    if (normKey && title) {
-                        serverEvents[normKey] = title;
-                    }
+                    if (normKey && title) serverEvents[normKey] = title;
                 });
                 dateEvents = serverEvents;
-                saveLocally();
             }
+            if (resData && resData.adminPassword && String(resData.adminPassword).trim()) {
+                adminPassword = String(resData.adminPassword).trim();
+            }
+            saveLocally();
+            setSyncBanner('ok', `✅ 시트 저장 완료 (출석 기록 ${globalLogs.length}건)`);
         } catch (e) {
-            console.error("구글 시트 저장 실패", e);
+            setSyncBanner('warn', `⚠️ 시트 저장 실패 (로컬에 임시 저장됨)`);
         }
     }
 
@@ -699,14 +717,8 @@
         if (!select || !input) return;
         const dStr = normalizeKoreanFullDate(select.value);
         const title = input.value.trim();
-        if (!dStr) {
-            alert("날짜를 선택해주세요.");
-            return;
-        }
-        if (!title) {
-            alert("행사명이나 공식일정 텍스트를 입력해주세요. (예: 1/4분기 공식대회, 야유회)");
-            return;
-        }
+        if (!dStr) { alert("날짜를 선택해주세요."); return; }
+        if (!title) { alert("행사명이나 공식일정 텍스트를 입력해주세요."); return; }
         dateEvents[dStr] = title;
         saveLocally();
         input.value = '';
@@ -725,9 +737,7 @@
         delete dateEvents[dStr];
         delete dateEvents[targetKey];
         for (const k of Object.keys(dateEvents)) {
-            if (normalizeKoreanFullDate(k) === targetKey) {
-                delete dateEvents[k];
-            }
+            if (normalizeKoreanFullDate(k) === targetKey) delete dateEvents[k];
         }
         saveLocally();
         renderAdminEventList();
@@ -744,7 +754,7 @@
             const pwd = prompt("관리자 비밀번호를 입력하세요:");
             if (pwd === adminPassword) {
                 isAdminLoggedIn = true;
-                sessionStorage.setItem('boksakol_sunday_admin_logged_in', 'true');
+                sessionStorage.setItem('sunday_admin_logged_in', 'true');
                 syncAdminUIState();
                 panel.classList.remove('hidden');
                 populateEventDateSelect();
@@ -779,25 +789,23 @@
     function logoutAdminMode() {
         isAdminLoggedIn = false;
         adminSearchKeyword = "";
-        sessionStorage.removeItem('boksakol_sunday_admin_logged_in');
+        sessionStorage.removeItem('sunday_admin_logged_in');
         syncAdminUIState();
         renderCheckinList();
         updateSwipeWrapperHeight();
     }
 
-    function changePassword() {
+    async function changePassword() {
         if (!isAdminLoggedIn) return;
         const input = document.getElementById('new-admin-password');
         const newPwd = input.value.trim();
-        if (!newPwd) {
-            alert("새 비밀번호를 입력해주세요.");
-            return;
-        }
-        if (confirm("관리자 비밀번호를 정말 변경하시겠습니까?")) {
+        if (!newPwd) { alert("새 비밀번호를 입력해주세요."); return; }
+        if (confirm("관리자 비밀번호를 정말 변경하시겠습니까? (PC와 휴대폰 모두 동일하게 적용됩니다)")) {
             adminPassword = newPwd;
-            safeStorageSet('boksakol_sunday_admin_pwd', newPwd);
+            safeStorageSet('sunday_admin_pwd', newPwd);
             input.value = '';
-            alert("관리자 비밀번호가 성공적으로 변경되었습니다.");
+            await saveDataToSheet();
+            alert("관리자 비밀번호가 변경되어 시트에 저장되었습니다.");
         }
     }
 
@@ -822,7 +830,7 @@
         const name = input.value.trim();
         if (!name) { alert("회원 이름을 입력해주세요."); return; }
         if (globalMembers.some(m => m.name === name)) { alert("이미 존재하는 회원 이름입니다."); return; }
-        
+
         globalMembers.push({ name: name });
         sortMembers();
         renderAdminMemberList();
@@ -837,7 +845,7 @@
         if (!isAdminLoggedIn) return;
         const targetName = globalMembers[index].name;
         if (!confirm(`[${targetName}] 회원을 정말 삭제하시겠습니까?`)) return;
-        
+
         globalMembers.splice(index, 1);
         sortMembers();
         renderAdminMemberList();
@@ -852,9 +860,7 @@
         if (!listDiv) return;
         listDiv.innerHTML = '';
 
-        if (!globalMembers || globalMembers.length === 0) {
-            globalMembers = [...DEFAULT_MEMBERS];
-        }
+        if (!globalMembers || globalMembers.length === 0) globalMembers = [...DEFAULT_MEMBERS];
 
         const eventTitle = getEventForDate(selectedDateStr);
         if (eventTitle) {
@@ -875,10 +881,10 @@
             }
         });
 
-        const workoutList = []; 
-        const attendList = [];  
-        const compList = [];    
-        const uncheckList = []; 
+        const workoutList = [];
+        const attendList = [];
+        const compList = [];
+        const uncheckList = [];
 
         globalMembers.forEach(member => {
             const name = String(member.name || "").trim();
@@ -905,14 +911,9 @@
 
         const tripleContainer = document.createElement('div');
         tripleContainer.className = 'checkin-triple-container';
-
-        const colWorkout = createTripleColumn("참석(운동)", "+10", "#059669", "col-workout", workoutList);
-        const colAttend = createTripleColumn("참석", "+5", "#0284c7", "col-attend", attendList);
-        const colComp = createTripleColumn("대회", "+10", "#d97706", "col-comp", compList);
-
-        tripleContainer.appendChild(colWorkout);
-        tripleContainer.appendChild(colAttend);
-        tripleContainer.appendChild(colComp);
+        tripleContainer.appendChild(createTripleColumn("참석(운동)", "+10", "#059669", "col-workout", workoutList));
+        tripleContainer.appendChild(createTripleColumn("참석", "+5", "#0284c7", "col-attend", attendList));
+        tripleContainer.appendChild(createTripleColumn("대회", "+10", "#d97706", "col-comp", compList));
         listDiv.appendChild(tripleContainer);
 
         if (!isAdminLoggedIn) {
@@ -968,14 +969,14 @@
         }
 
         targetMembers.forEach((m, idx) => {
-            container.appendChild(createMemberCard(m, idx + 1, dayAttendance));
+            container.appendChild(createMemberCard(m, idx + 1));
         });
     }
 
     function createTripleColumn(titleText, subScoreText, colorCode, boxClassName, listData) {
         const col = document.createElement('div');
         col.className = `checkin-column-box ${boxClassName}`;
-        
+
         const title = document.createElement('div');
         title.className = 'checkin-column-title';
         title.style.color = colorCode;
@@ -1003,12 +1004,11 @@
         return col;
     }
 
-    function createMemberCard(member, displayIndex, dayAttendance) {
+    function createMemberCard(member, displayIndex) {
         const name = String(member.name || "").trim();
-
         const card = document.createElement('div');
         card.className = 'member-card';
-        
+
         const info = document.createElement('div');
         info.className = 'member-info';
         const nameDiv = document.createElement('div');
@@ -1024,7 +1024,7 @@
         btn1.type = 'button';
         btn1.textContent = '참석(운동)';
         btn1.addEventListener('click', () => handleCheckIn(name, 10));
-        
+
         const btn2 = document.createElement('button');
         btn2.type = 'button';
         btn2.textContent = '참석';
@@ -1074,9 +1074,9 @@
         }
 
         globalLogs = globalLogs.filter(log => !(String(log.name).trim() === cleanName && normalizeKoreanFullDate(log.date) === targetDate));
-        
+
         if ([10, 5, 99].includes(score)) {
-            let mMatch = targetDate.match(/(\d+)월/);
+            const mMatch = targetDate.match(/(\d+)월/);
             globalLogs.push({
                 name: cleanName,
                 date: targetDate,
@@ -1093,12 +1093,12 @@
     function renderStats() {
         const statsDiv = document.getElementById('stats-list');
         const dateTextDiv = document.getElementById('stats-current-date-text');
-        
+
         const now = new Date();
         const y = now.getFullYear();
         const m = now.getMonth() + 1;
         const d = now.getDate();
-        
+
         if (statsSelectedMonth === "전체") {
             dateTextDiv.innerText = `[ ${y}년 ${m}월 ${d}일 현재 ]`;
         } else {
@@ -1124,8 +1124,12 @@
             const sNum = Number(log.score);
             const normDate = normalizeKoreanFullDate(log.date);
             if (log.name && normDate && [10, 5, 99].includes(sNum)) {
-                const key = normDate + "_" + String(log.name).trim();
-                uniqueLogs.set(key, { name: String(log.name).trim(), date: normDate, score: sNum, month: log.month });
+                uniqueLogs.set(normDate + "_" + String(log.name).trim(), {
+                    name: String(log.name).trim(),
+                    date: normDate,
+                    score: sNum,
+                    month: log.month
+                });
             }
         });
 
@@ -1138,9 +1142,7 @@
                 if (mMatch) mVal = parseInt(mMatch[1], 10);
             }
 
-            if (!statsMap[name]) {
-                statsMap[name] = { score: 0, workout: 0, attend: 0, comp: 0, monthly: {} };
-            }
+            if (!statsMap[name]) statsMap[name] = { score: 0, workout: 0, attend: 0, comp: 0, monthly: {} };
 
             let points = 0;
             if (score === 10) { points = 10; statsMap[name].workout += 1; }
@@ -1150,9 +1152,7 @@
             statsMap[name].score += points;
 
             if (mVal >= 1 && mVal <= 12) {
-                if (!statsMap[name].monthly[mVal]) {
-                    statsMap[name].monthly[mVal] = { score: 0, workout: 0, attend: 0, comp: 0 };
-                }
+                if (!statsMap[name].monthly[mVal]) statsMap[name].monthly[mVal] = { score: 0, workout: 0, attend: 0, comp: 0 };
                 statsMap[name].monthly[mVal].score += points;
                 if (score === 10) statsMap[name].monthly[mVal].workout += 1;
                 else if (score === 5) statsMap[name].monthly[mVal].attend += 1;
@@ -1160,7 +1160,7 @@
             }
         });
 
-        let displayList = [];
+        const displayList = [];
         Object.keys(statsMap).forEach(name => {
             const data = statsMap[name];
             let targetScore = 0, targetWorkout = 0, targetAttend = 0, targetComp = 0;
@@ -1217,7 +1217,6 @@
 
         displayList.forEach((item, index) => {
             if (index > 0 && item.score < displayList[index - 1].score) currentRank = index + 1;
-
             const rankText = currentRank === 1 ? '🥇 1' : (currentRank === 2 ? '🥈 2' : (currentRank === 3 ? '🥉 3' : `${currentRank}`));
             const rowClass = currentRank === 1 ? 'top-1' : (currentRank === 2 ? 'top-2' : (currentRank === 3 ? 'top-3' : ''));
 
@@ -1244,44 +1243,26 @@
         document.getElementById('tab-stats-btn').onclick = () => switchTab(1);
         document.getElementById('admin-open-btn').onclick = toggleAdminMode;
 
-        window.addEventListener('resize', () => {
-            updateSwipeWrapperHeight();
-        });
+        window.addEventListener('resize', () => updateSwipeWrapperHeight());
 
         const swipeContainer = document.getElementById('swipe-container');
         let startX = 0;
-        let startY = 0;
         let isSwiping = false;
 
         swipeContainer.addEventListener('touchstart', (e) => {
             startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
             isSwiping = true;
-        }, { passive: true });
-
-        swipeContainer.addEventListener('touchmove', (e) => {
-            if (!isSwiping) return;
         }, { passive: true });
 
         swipeContainer.addEventListener('touchend', (e) => {
             if (!isSwiping) return;
             isSwiping = false;
-
-            let endX = e.changedTouches[0].clientX;
-            let diff = startX - endX;
-
+            const diff = startX - e.changedTouches[0].clientX;
             if (Math.abs(diff) > 40) {
-                if (diff > 0 && activePaneIndex < 1) {
-                    switch_tab_safe(activePaneIndex + 1);
-                } else if (diff < 0 && activePaneIndex > 0) {
-                    switch_tab_safe(activePaneIndex - 1);
-                }
+                if (diff > 0 && activePaneIndex < 1) switchTab(activePaneIndex + 1);
+                else if (diff < 0 && activePaneIndex > 0) switchTab(activePaneIndex - 1);
             }
         });
-    }
-
-    function switch_tab_safe(idx) {
-        switchTab(idx);
     }
 
     async function initApp() {
@@ -1292,7 +1273,7 @@
         sortMembers();
         renderSundayVerticalList();
         renderStats();
-        
+
         await loadDataFromSheet();
         renderSundayVerticalList();
         renderStats();
